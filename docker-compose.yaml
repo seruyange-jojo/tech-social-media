@@ -1,0 +1,39 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:17-alpine
+    networks: 
+      - app
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: tech-social-media
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "8080:8080"
+    restart: always
+    networks: 
+      - app
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: admin
+      DB_PASSWORD: admin
+      DB_NAME: tech-social-media
+
+volumes:
+  pgdata:
+
+networks:
+  app: 
+    driver: bridge 
