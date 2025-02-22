@@ -1,10 +1,11 @@
-package config
+package database
 
 import (
 	"fmt"
 	"os"
 	"log"
-	"github.com/joho/godotenv"
+	"tech-social-media/config"
+	"tech-social-media/models"
 	"gorm.io/gorm"
 	"gorm.io/driver/postgres"
 	
@@ -14,10 +15,8 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
-	err := godotenv.Load()
-	if err != nil{
-		log.Fatal("Error loading .env file")
-	}
+	
+	config.LoadEnv()
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 	os.Getenv("DB_HOST"),
@@ -35,6 +34,6 @@ func ConnectDB() {
 	log.Println("Database connected successfully")
 
 	DB = db
-
+	DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Comment{}, &models.Message{}, &models.Course{})
 }
 
